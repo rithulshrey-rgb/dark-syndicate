@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DARK SYNDICATE (DS) | Competitive Free Fire Esports</title>
+  <meta name="description" content="Official competitive Garena Free Fire esports organization and tournament platform for DARK SYNDICATE (DS)." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Orbitron & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- React 18 & Babel Standalone (Compiles JSX directly in browser with zero build tools) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      background-color: #09090B;
+      color: #F4F4F5;
+      font-family: 'Inter', sans-serif;
+    }
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-[#09090B] text-zinc-100 antialiased selection:bg-red-600 selection:text-white">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // ============================================================================
+    // INLINE SVG ICON SET (ZERO EXTERNAL DEPENDENCY FAILURES)
+    // ============================================================================
+    const Icon = ({ name, className = "w-4 h-4" }) => {
+      const icons = {
+        shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+        crosshair: <><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></>,
+        calendar: <><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
+        clock: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
+        award: <><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></>,
+        chevronRight: <polyline points="9 18 15 12 9 6" />,
+        checkCircle: <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>,
+        alertCircle: <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>,
+        copy: <><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>,
+        check: <polyline points="20 6 9 17 4 12" />,
+        externalLink: <><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></>,
+        lock: <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
+        unlock: <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></>,
+        trash: <><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>,
+        target: <><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></>,
+        zap: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />,
+        menu: <><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></>,
+        x: <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+        smartphone: <><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></>,
+        upload: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></>,
+        search: <><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>,
+        radio: <><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></>,
+        crown: <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />,
+        medal: <><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/></>,
+        users: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
+        instagram: <><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></>,
+        youtube: <><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></>,
+        discord: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+        logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+        reset: <><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></>
+      };
+
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          {icons[name] || null}
+        </svg>
+      );
+    };
+
+    // ============================================================================
+    // DEFAULT SEED DATA & LOCALSTORAGE KEY
+    // ============================================================================
+    const STORAGE_KEY = 'dark_syndicate_standalone_v1';
+
+    const DEFAULT_DATA = {
+      adminCredentials: {
+        username: 'admin',
+        passwordHash: 'dsadmin2026'
+      },
+      prizeConfig: {
+        entryFee: 150,
+        firstPrize: 500,
+        secondPrize: 300,
+        thirdPrize: 200,
+        winnerRewardText: 'Free finger sleeves for every winning team member',
+        bannerText: '₹150 TEAM ENTRY • ₹1,000 TOTAL CASH PRIZES • FREE FINGER SLEEVES FOR ALL TOP 3 TEAMS',
+        upiId: '9491233033@fam',
+        upiPayeeName: 'Dark Syndicate Esports'
+      },
+      pointsSystem: {
+        killPoints: 1,
+        booyahBonus: 2,
+        placementPoints: {
+          1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5,
+          7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0
+        }
+      },
+      roster: [
+        {
+          id: 'p-1',
+          ign: 'DS・REAPER',
+          realName: 'Aarav Sharma',
+          role: 'IGL',
+          number: '01',
+          uid: '2481904412',
+          kills: 418,
+          mvps: 29,
+          matches: 142,
+          avgPlacement: 2.4,
+          social: 'https://instagram.com',
+          socialHandle: '@ds_reaper.ff',
+          recentMatches: [
+            { match: 'Crimson Showdown R3 • Bermuda', placement: 1, kills: 7, points: 19, mvp: true },
+            { match: 'Crimson Showdown R2 • Purgatory', placement: 2, kills: 5, points: 14, mvp: false },
+            { match: 'Deccan Pro Scrims #14', placement: 1, kills: 8, points: 20, mvp: true }
+          ]
+        },
+        {
+          id: 'p-2',
+          ign: 'DS・VORTEX',
+          realName: 'Rohan Verma',
+          role: 'Rusher',
+          number: '07',
+          uid: '1938472610',
+          kills: 534,
+          mvps: 37,
+          matches: 148,
+          avgPlacement: 2.3,
+          social: 'https://instagram.com',
+          socialHandle: '@ds_vortex.op',
+          recentMatches: [
+            { match: 'Crimson Showdown R3 • Bermuda', placement: 1, kills: 9, points: 21, mvp: true },
+            { match: 'Crimson Showdown R2 • Purgatory', placement: 2, kills: 6, points: 15, mvp: true },
+            { match: 'Deccan Pro Scrims #14', placement: 1, kills: 10, points: 22, mvp: true }
+          ]
+        },
+        {
+          id: 'p-3',
+          ign: 'DS・PHANTOM',
+          realName: 'Karthik Nair',
+          role: 'Sniper',
+          number: '11',
+          uid: '3091827465',
+          kills: 389,
+          mvps: 22,
+          matches: 139,
+          avgPlacement: 2.5,
+          social: 'https://youtube.com',
+          socialHandle: '@PhantomAWM',
+          recentMatches: [
+            { match: 'Crimson Showdown R3 • Bermuda', placement: 1, kills: 5, points: 17, mvp: false },
+            { match: 'Crimson Showdown R2 • Purgatory', placement: 2, kills: 4, points: 13, mvp: false },
+            { match: 'Deccan Pro Scrims #14', placement: 1, kills: 6, points: 18, mvp: false }
+          ]
+        },
+        {
+          id: 'p-4',
+          ign: 'DS・SHADOW',
+          realName: 'Vikram Reddy',
+          role: 'Support',
+          number: '99',
+          uid: '4829104756',
+          kills: 312,
+          mvps: 18,
+          matches: 145,
+          avgPlacement: 2.2,
+          social: 'https://instagram.com',
+          socialHandle: '@ds_shadow.ff',
+          recentMatches: [
+            { match: 'Crimson Showdown R3 • Bermuda', placement: 1, kills: 4, points: 16, mvp: false },
+            { match: 'Crimson Showdown R2 • Purgatory', placement: 2, kills: 3, points: 12, mvp: false },
+            { match: 'Deccan Pro Scrims #14', placement: 1, kills: 5, points: 17, mvp: false }
+          ]
+        }
+      ],
+      tournaments: [
+        {
+          id: 'tour-1',
+          name: 'DS CRIMSON SHOWDOWN S1',
+          date: '2026-11-28',
+          time: '08:00 PM IST',
+          opponent: '48 Open & Invited Squads',
+          status: 'Upcoming',
+          format: 'Squad BR • Bermuda / Purgatory / Alpine',
+          entryFee: 150,
+          prizePool: 1000,
+          slotsTotal: 48,
+          slotsFilled: 39
+        },
+        {
+          id: 'tour-2',
+          name: 'SYNDICATE NIGHT CLASH #09',
+          date: '2026-11-22',
+          time: '04:00 PM IST',
+          opponent: '12 Tier-1 Invitational Squads',
+          status: 'Live',
+          format: 'Squad BR • 4 Rounds Custom Lobby',
+          entryFee: 150,
+          prizePool: 1000,
+          slotsTotal: 12,
+          slotsFilled: 12
+        },
+        {
+          id: 'tour-3',
+          name: 'BLOOD MOON INVITATIONAL',
+          date: '2026-11-14',
+          time: '07:30 PM IST',
+          opponent: '24 Regional Competitive Squads',
+          status: 'Completed',
+          format: 'Squad BR • Best of 4 Maps',
+          entryFee: 150,
+          prizePool: 1000,
+          slotsTotal: 24,
+          slotsFilled: 24
+        }
+      ],
+      liveMatchInfo: {
+        tournamentName: 'SYNDICATE NIGHT CLASH #09',
+        currentMap: 'Alpine (Round 4 of 4)',
+        statusLabel: 'MATCH IN PROGRESS • ZONE 4',
+        nextMatchTime: 'Next Lobby: 08:00 PM IST'
+      },
+      teams: [
+        {
+          id: 'team-1',
+          name: 'DARK SYNDICATE',
+          tag: 'DS',
+          matchesPlayed: 4,
+          booyahs: 2,
+          kills: 46,
+          bonusPoints: 4,
+          placementPoints: 42,
+          totalPoints: 92,
+          rounds: [
+            { round: 'Round 1 • Bermuda', placement: 1, kills: 14, bonus: 0 },
+            { round: 'Round 2 • Purgatory', placement: 2, kills: 11, bonus: 0 },
+            { round: 'Round 3 • Alpine', placement: 1, kills: 13, bonus: 0 },
+            { round: 'Round 4 • Kalahari', placement: 3, kills: 8, bonus: 0 }
+          ]
+        },
+        {
+          id: 'team-2',
+          name: 'CRIMSON VANGUARD',
+          tag: 'CVG',
+          matchesPlayed: 4,
+          booyahs: 1,
+          kills: 38,
+          bonusPoints: 2,
+          placementPoints: 34,
+          totalPoints: 74,
+          rounds: [
+            { round: 'Round 1 • Bermuda', placement: 3, kills: 9, bonus: 0 },
+            { round: 'Round 2 • Purgatory', placement: 1, kills: 13, bonus: 0 },
+            { round: 'Round 3 • Alpine', placement: 4, kills: 7, bonus: 0 },
+            { round: 'Round 4 • Kalahari', placement: 2, kills: 9, bonus: 0 }
+          ]
+        },
+        {
+          id: 'team-3',
+          name: 'APEX PREDATORS',
+          tag: 'APX',
+          matchesPlayed: 4,
+          booyahs: 1,
+          kills: 33,
+          bonusPoints: 2,
+          placementPoints: 31,
+          totalPoints: 66,
+          rounds: [
+            { round: 'Round 1 • Bermuda', placement: 2, kills: 10, bonus: 0 },
+            { round: 'Round 2 • Purgatory', placement: 5, kills: 6, bonus: 0 },
+            { round: 'Round 3 • Alpine', placement: 3, kills: 6, bonus: 0 },
+            { round: 'Round 4 • Kalahari', placement: 1, kills: 11, bonus: 0 }
+          ]
+        },
+        {
+          id: 'team-4',
+          name: 'NIGHTMARE PROTOCOL',
+          tag: 'NMP',
+          matchesPlayed: 4,
+          booyahs: 0,
+          kills: 29,
+          bonusPoints: 0,
+          placementPoints: 24,
+          totalPoints: 53,
+          rounds: [
+            { round: 'Round 1 • Bermuda', placement: 4, kills: 8, bonus: 0 },
+            { round: 'Round 2 • Purgatory', placement: 3, kills: 8, bonus: 0 },
+            { round: 'Round 3 • Alpine', placement: 2, kills: 9, bonus: 0 },
+            { round: 'Round 4 • Kalahari', placement: 7, kills: 4, bonus: 0 }
+          ]
+        },
+        {
+          id: 'team-5',
+          name: 'OBSIDIAN WOLVES',
+          tag: 'OBW',
+          matchesPlayed: 4,
+          booyahs: 0,
+          kills: 24,
+          bonusPoints: 0,
+          placementPoints: 20,
+          totalPoints: 44,
+          rounds: [
+            { round: 'Round 1 • Bermuda', placement: 5, kills: 6, bonus: 0 },
+            { round: 'Round 2 • Purgatory', placement: 4, kills: 7, bonus: 0 },
+            { round: 'Round 3 • Alpine', placement: 6, kills: 5, bonus: 0 },
+            { round: 'Round 4 • Kalahari', placement: 4, kills: 6, bonus: 0 }
+          ]
+        },
+        {
+          id: 'team-6',
+          name: 'VENOM ELITE',
+          tag: 'VNM',
+          matchesPlayed: 4,
+          booyahs: 0,
+          kills: 19,
+          bonusPoints: 0,
+          placementPoints: 16,
+          totalPoints: 35,
+          rounds: [
+            { round: 'Round 1 • Bermuda', placement: 6, kills: 5, bonus: 0 },
+            { round: 'Round 2 • Purgatory', placement: 6, kills: 5, bonus: 0 },
+            { round: 'Round 3 • Alpine', placement: 5, kills: 5, bonus: 0 },
+            { round: 'Round 4 • Kalahari', placement: 6, kills: 4, bonus: 0 }
+          ]
+        }
+      ],
+      achievements: [
+        {
+          id: 'ach-1',
+          title: 'BLOOD MOON INVITATIONAL CHAMPIONS',
+          placement: '1ST PLACE • ₹500 + GEAR',
+          date: 'November 2026',
+          details: 'Finished 1st overall across 4 maps with 92 total points and 46 squad eliminations.'
+        },
+        {
+          id: 'ach-2',
+          title: 'DECCAN ELITE SCRIMS SERIES',
+          placement: '3X WEEKLY CHAMPIONS',
+          date: 'October 2026',
+          details: 'Consecutive first-place finishes against established regional Free Fire squads.'
+        },
+        {
+          id: 'ach-3',
+          title: 'REGIONAL MVP HONORS',
+          placement: '14 MVP MEDALS',
+          date: '2026 Season',
+          details: 'DS・VORTEX & DS・REAPER ranked top two fraggers across custom tournament lobbies.'
+        }
+      ],
+      registrations: [
+        {
+          id: 'DS-REG-8492',
+          tournamentId: 'tour-1',
+          tournamentName: 'DS CRIMSON SHOWDOWN S1',
+          teamName: 'PHANTOM SLAYERS',
+          captainName: 'Siddharth Rao',
+          players: [
+            { name: 'PS・KIRA', uid: '2819304911' },
+            { name: 'PS・ZORO', uid: '1920394812' },
+            { name: 'PS・ACE', uid: '3910293847' },
+            { name: 'PS・NOVA', uid: '4910293845' }
+          ],
+          contact: '+91 98490 11223 / @ps_kira',
+          amount: 150,
+          utrNumber: '632910482910',
+          screenshotName: 'gpay_receipt_8492.png',
+          paymentStatus: 'Payment Verified',
+          submittedAt: '2026-11-20 18:45 IST'
+        },
+        {
+          id: 'DS-REG-9104',
+          tournamentId: 'tour-1',
+          tournamentName: 'DS CRIMSON SHOWDOWN S1',
+          teamName: 'ROYAL STRIKERS',
+          captainName: 'Manish Kumar',
+          players: [
+            { name: 'RS・TOXIC', uid: '5829104920' },
+            { name: 'RS・BLAZE', uid: '6829104921' },
+            { name: 'RS・HYDRA', uid: '7829104922' },
+            { name: 'RS・GHOST', uid: '8829104923' }
+          ],
+          contact: '+91 91234 56789 / @rs_toxic',
+          amount: 150,
+          utrNumber: '633194820194',
+          screenshotName: 'phonepe_utr_9104.jpg',
+          paymentStatus: 'Verification Pending',
+          submittedAt: '2026-11-22 14:12 IST'
+        }
+      ],
+      applications: [
+        {
+          id: 'app-1',
+          playerName: 'Nikhil Gowda',
+          uid: '2948102938',
+          role: 'Rusher',
+          experience: '2+ years T2/T3 Free Fire custom lobbies, 4.8 K/D, Master rank',
+          contact: '@nikhil_ff / Discord: Nikhil#4421',
+          status: 'Under Review',
+          submittedAt: '2026-11-21'
+        }
+      ]
+    };
+
+    // ============================================================================
+    // MINIMALIST GEOMETRIC DARK SYNDICATE (DS) EMBLEM
+    // ============================================================================
+    const DarkSyndicateEmblem = ({ className = 'w-10 h-10' }) => (
+      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-label="Dark Syndicate Logo">
+        <path d="M60 6L108 30L100 84L60 114L20 84L12 30L60 6Z" fill="#121215" stroke="#DC2626" strokeWidth="3" />
+        <path d="M60 15L99 35L92 79L60 104L28 79L21 35L60 15Z" stroke="#3F3F46" strokeWidth="1.2" />
+        <path d="M44 33L49 23L55 29L60 20L65 29L71 23L76 33H44Z" fill="#DC2626" />
+        <text x="60" y="72" textAnchor="middle" fill="#FFFFFF" fontFamily="Orbitron, sans-serif" fontWeight="900" fontSize="28" letterSpacing="1.5">
+          D<tspan fill="#DC2626">S</tspan>
+        </text>
+        <line x1="38" y1="82" x2="82" y2="82" stroke="#DC2626" strokeWidth="2" />
+      </svg>
+    );
+
+    // ============================================================================
+    // SLEEK VECTOR ESPORTS PLAYER AVATAR
+    // ============================================================================
+    const SleekPlayerAvatar = ({ role, number }) => (
+      <div className="relative w-full h-48 rounded-xl bg-[#0D0D10] border border-zinc-800/80 overflow-hidden flex items-center justify-center">
+        <span className="absolute top-3 right-3.5 font-orbitron font-bold text-2xl text-zinc-800 select-none">
+          #{number}
+        </span>
+        <span className="absolute top-3 left-3.5 px-2.5 py-0.5 rounded text-[10px] font-orbitron font-bold tracking-widest uppercase bg-zinc-900 text-red-500 border border-zinc-800">
+          {role}
+        </span>
+        <svg viewBox="0 0 140 150" className="w-32 h-36 mt-4">
+          <path d="M22 148C26 116 46 104 70 104C94 104 114 116 118 148H22Z" fill="#18181B" stroke="#27272A" strokeWidth="1.5" />
+          <path d="M70 22C47 22 35 44 34 74L47 96L70 104L93 96L106 74C105 44 93 22 70 22Z" fill="#121215" stroke="#3F3F46" strokeWidth="1.5" />
+          <path d="M70 34C54 34 45 49 44 72L70 90L96 72C95 49 86 34 70 34Z" fill="#09090B" />
+          <path d="M50 68L70 76L90 68L85 88L70 95L55 88L50 68Z" fill="#18181B" stroke="#DC2626" strokeWidth="1.2" />
+          <polygon points="52,58 65,62 54,64" fill="#DC2626" />
+          <polygon points="88,58 75,62 86,64" fill="#DC2626" />
+        </svg>
+      </div>
+    );
+
+    // ============================================================================
+    // CLEAN DETERMINISTIC UPI QR CODE COMPONENT
+    // ============================================================================
+    const UpiQrCode = ({ upiId, amount, payeeName }) => {
+      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+
+      const matrix = useMemo(() => {
+        const size = 21;
+        const grid = Array.from({ length: size }, () => Array(size).fill(false));
+        let seed = 0;
+        for (let i = 0; i < upiUri.length; i++) {
+          seed = (seed * 31 + upiUri.charCodeAt(i)) % 1000003;
+        }
+        const placeFinder = (r0, c0) => {
+          for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+              const isBorder = r === 0 || r === 6 || c === 0 || c === 6;
+              const isCenter = r >= 2 && r <= 4 && c >= 2 && c <= 4;
+              grid[r0 + r][c0 + c] = isBorder || isCenter;
+            }
+          }
+        };
+        placeFinder(0, 0);
+        placeFinder(0, size - 7);
+        placeFinder(size - 7, 0);
+
+        for (let r = 0; r < size; r++) {
+          for (let c = 0; c < size; c++) {
+            const inFinder = (r < 8 && c < 8) || (r < 8 && c >= size - 8) || (r >= size - 8 && c < 8);
+            if (!inFinder) {
+              seed = (seed * 1664525 + 1013904223) % 4294967296;
+              grid[r][c] = (seed & 1) === 1;
+            }
+          }
+        }
+        return grid;
+      }, [upiUri]);
+
+      return (
+        <div className="flex flex-col items-center bg-white p-3 rounded-xl border border-zinc-200 shrink-0">
+          <svg viewBox="0 0 21 21" className="w-32 h-32">
+            <rect width="21" height="21" fill="#FFFFFF" />
+            {matrix.map((row, r) =>
+              row.map((cell, c) =>
+                cell ? <rect key={`${r}-${c}`} x={c} y={r} width="1" height="1" fill="#09090B" /> : null
+              )
+            )}
+          </svg>
+          <span className="mt-1.5 text-[10px] font-mono font-bold text-zinc-900">{upiId}</span>
+        </div>
+      );
+    };
+
+    // ============================================================================
+    // MAIN APPLICATION
+    // ============================================================================
+    function App() {
+      const [data, setData] = useState(() => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          return saved ? JSON.parse(saved) : DEFAULT_DATA;
+        } catch {
+          return DEFAULT_DATA;
+        }
+      });
+
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {}
+      }, [data]);
+
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [toast, setToast] = useState(null);
+      const notify = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 3500);
+      };
+
+      const [centerTab, setCenterTab] = useState('standings');
+      const [sortField, setSortField] = useState('totalPoints');
+      const [selectedLiveTeamId, setSelectedLiveTeamId] = useState('team-1');
+      const [activePlayer, setActivePlayer] = useState(null);
+
+      // Registration & UPI Payment Modal
+      const [regModalOpen, setRegModalOpen] = useState(false);
+      const [regStep, setRegStep] = useState(1);
+      const [copiedUpi, setCopiedUpi] = useState(false);
+      const [activeReg, setActiveReg] = useState(null);
+      const [lookupQuery, setLookupQuery] = useState('');
+      const [regError, setRegError] = useState('');
+      const [regForm, setRegForm] = useState({
+        tournamentId: 'tour-1',
+        teamName: '',
+        captainName: '',
+        contact: '',
+        p1Name: '', p1Uid: '',
+        p2Name: '', p2Uid: '',
+        p3Name: '', p3Uid: '',
+        p4Name: '', p4Uid: ''
+      });
+      const [payForm, setPayForm] = useState({ utrNumber: '', screenshotName: '' });
+
+      // Recruitment Form
+      const [recruitForm, setRecruitForm] = useState({
+        playerName: '', uid: '', role: 'Rusher', experience: '', contact: ''
+      });
+      const [recruitError, setRecruitError] = useState('');
+      const [recruitSuccess, setRecruitSuccess] = useState(false);
+
+      // Admin Login & Control Panel
+      const [adminLoginOpen, setAdminLoginOpen] = useState(false);
+      const [isAdmin, setIsAdmin] = useState(false);
+      const [adminPanelOpen, setAdminPanelOpen] = useState(false);
+      const [adminTab, setAdminTab] = useState('payments');
+      const [loginInputs, setLoginInputs] = useState({ username: '', password: '' });
+      const [loginError, setLoginError] = useState('');
+
+      // Admin Sub-Forms
+      const [newTour, setNewTour] = useState({
+        name: '', date: '2026-12-05', time: '08:00 PM IST', opponent: '48 Open Squads',
+        status: 'Upcoming', format: 'Squad BR • 3 Maps', entryFee: 150, prizePool: 1000, slotsTotal: 48
+      });
+      const [roundInput, setRoundInput] = useState({
+        teamId: 'team-1', round: 'Round 5 • Bermuda', placement: 1, kills: 10
+      });
+      const [newTeam, setNewTeam] = useState({ name: '', tag: '' });
+      const [newPlayer, setNewPlayer] = useState({
+        ign: '', realName: '', role: 'Rusher', number: '05', uid: '', socialHandle: '@ds_operative'
+      });
+
+      const computedTeams = useMemo(() => {
+        const { killPoints, booyahBonus, placementPoints } = data.pointsSystem;
+        return data.teams.map((team) => {
+          if (!team.rounds || team.rounds.length === 0) {
+            return {
+              ...team,
+              matchesPlayed: team.matchesPlayed || 0,
+              booyahs: team.booyahs || 0,
+              kills: team.kills || 0,
+              placementPoints: team.placementPoints || 0,
+              totalPoints: team.totalPoints || 0
+            };
+          }
+          let kills = 0, placePts = 0, bonus = 0, booyahs = 0;
+          team.rounds.forEach((r) => {
+            const pos = Number(r.placement) || 12;
+            if (pos === 1) {
+              booyahs += 1;
+              bonus += Number(booyahBonus) || 0;
+            }
+            kills += Number(r.kills) || 0;
+            placePts += placementPoints[pos] ?? 0;
+            bonus += Number(r.bonus) || 0;
+          });
+          const totalPoints = placePts + kills * (Number(killPoints) || 1) + bonus;
+          return { ...team, matchesPlayed: team.rounds.length, booyahs, kills, placementPoints: placePts, totalPoints };
+        });
+      }, [data.teams, data.pointsSystem]);
+
+      const sortedTeams = useMemo(() => {
+        return [...computedTeams].sort((a, b) => {
+          if (b[sortField] !== a[sortField]) return b[sortField] - a[sortField];
+          return b.booyahs - a.booyahs || b.kills - a.kills;
+        });
+      }, [computedTeams, sortField]);
+
+      const sortedPlayers = useMemo(() => [...data.roster].sort((a, b) => b.kills - a.kills), [data.roster]);
+      const totalSquadKills = useMemo(() => data.roster.reduce((sum, p) => sum + (Number(p.kills) || 0), 0), [data.roster]);
+
+      const openRegisterModal = (tourId = 'tour-1') => {
+        setRegForm((prev) => ({ ...prev, tournamentId: tourId }));
+        setRegStep(1);
+        setRegError('');
+        setPayForm({ utrNumber: '', screenshotName: '' });
+        setRegModalOpen(true);
+      };
+
+      const handleStep1Submit = (e) => {
+        e.preventDefault();
+        setRegError('');
+        if (!regForm.teamName.trim() || !regForm.captainName.trim() || !regForm.contact.trim()) {
+          setRegError('Please provide Team Name, Captain Name, and WhatsApp/Social Contact.');
+          return;
+        }
+        if (!regForm.p1Name.trim() || !regForm.p1Uid.trim() || !regForm.p2Name.trim() || !regForm.p2Uid.trim()) {
+          setRegError('Please enter at least 2 players with their Garena Free Fire UIDs.');
+          return;
+        }
+
+        const tour = data.tournaments.find((t) => t.id === regForm.tournamentId) || data.tournaments[0];
+        const fee = tour?.entryFee ?? data.prizeConfig.entryFee;
+        const regId = `DS-REG-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        const draft = {
+          id: regId,
+          tournamentId: tour.id,
+          tournamentName: tour.name,
+          teamName: regForm.teamName.trim().toUpperCase(),
+          captainName: regForm.captainName.trim(),
+          contact: regForm.contact.trim(),
+          players: [
+            { name: regForm.p1Name.trim(), uid: regForm.p1Uid.trim() },
+            { name: regForm.p2Name.trim(), uid: regForm.p2Uid.trim() },
+            { name: regForm.p3Name.trim() || 'Player 3', uid: regForm.p3Uid.trim() || '—' },
+            { name: regForm.p4Name.trim() || 'Player 4', uid: regForm.p4Uid.trim() || '—' }
+          ],
+          amount: fee,
+          utrNumber: '',
+          screenshotName: '',
+          paymentStatus: 'Pending Payment',
+          submittedAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST'
+        };
+
+        setData((prev) => ({ ...prev, registrations: [draft, ...prev.registrations] }));
+        setActiveReg(draft);
+        setRegStep(2);
+      };
+
+      const handleCopyUpi = () => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(data.prizeConfig.upiId).catch(() => {});
+        }
+        setCopiedUpi(true);
+        notify(`Copied UPI ID: ${data.prizeConfig.upiId}`);
+        setTimeout(() => setCopiedUpi(false), 3000);
+      };
+
+      const handleStep2PaymentSubmit = (e) => {
+        e.preventDefault();
+        setRegError('');
+        const cleanUtr = payForm.utrNumber.trim();
+        if (!cleanUtr || cleanUtr.length < 8) {
+          setRegError('Please enter a valid UPI Reference / UTR ID (minimum 8 characters).');
+          return;
+        }
+        if (!activeReg) return;
+
+        const updated = {
+          ...activeReg,
+          utrNumber: cleanUtr,
+          screenshotName: payForm.screenshotName || 'None attached',
+          paymentStatus: 'Verification Pending',
+          submittedAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST'
+        };
+
+        setData((prev) => ({
+          ...prev,
+          registrations: prev.registrations.map((r) => (r.id === updated.id ? updated : r)),
+          tournaments: prev.tournaments.map((t) =>
+            t.id === updated.tournamentId
+              ? { ...t, slotsFilled: Math.min(t.slotsTotal || 48, (t.slotsFilled || 0) + 1) }
+              : t
+          )
+        }));
+
+        setActiveReg(updated);
+        setRegStep(3);
+        notify('Payment reference submitted for verification.');
+      };
+
+      const handleRecruitSubmit = (e) => {
+        e.preventDefault();
+        setRecruitError('');
+        if (!recruitForm.playerName.trim() || !recruitForm.uid.trim() || !recruitForm.contact.trim()) {
+          setRecruitError('Please fill in your In-Game Name, Free Fire UID, and Contact handle.');
+          return;
+        }
+        if (!/^\d{6,14}$/.test(recruitForm.uid.trim())) {
+          setRecruitError('Free Fire UID must be 6–14 numeric digits.');
+          return;
+        }
+
+        const app = {
+          id: `app-${Date.now()}`,
+          playerName: recruitForm.playerName.trim(),
+          uid: recruitForm.uid.trim(),
+          role: recruitForm.role,
+          experience: recruitForm.experience.trim() || 'Competitive Scrims',
+          contact: recruitForm.contact.trim(),
+          status: 'Under Review',
+          submittedAt: new Date().toISOString().split('T')[0]
+        };
+
+        setData((prev) => ({ ...prev, applications: [app, ...prev.applications] }));
+        setRecruitSuccess(true);
+        setRecruitForm({ playerName: '', uid: '', role: 'Rusher', experience: '', contact: '' });
+        notify('Recruitment application submitted.');
+      };
+
+      const handleAdminLogin = (e) => {
+        e.preventDefault();
+        setLoginError('');
+        if (
+          loginInputs.username.trim() === data.adminCredentials.username &&
+          loginInputs.password === data.adminCredentials.passwordHash
+        ) {
+          setIsAdmin(true);
+          setAdminLoginOpen(false);
+          setAdminPanelOpen(true);
+          setLoginInputs({ username: '', password: '' });
+          notify('Admin session unlocked.');
+        } else {
+          setLoginError('Invalid admin credentials.');
+        }
+      };
+
+      const handlePaymentDecision = (id, status) => {
+        if (!isAdmin) return;
+        setData((prev) => ({
+          ...prev,
+          registrations: prev.registrations.map((r) => (r.id === id ? { ...r, paymentStatus: status } : r))
+        }));
+        notify(`Registration ${id} marked as ${status}.`);
+      };
+
+      const handleResetDemo = () => {
+        if (!isAdmin) return;
+        localStorage.removeItem(STORAGE_KEY);
+        setData(DEFAULT_DATA);
+        notify('Platform data reset to default.');
+      };
+
+      const getPaymentStatusClass = (status) => {
+        switch (status) {
+          case 'Payment Verified': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+          case 'Verification Pending': return 'bg-amber-500/10 text-amber-300 border-amber-500/30';
+          case 'Payment Rejected': return 'bg-red-500/10 text-red-400 border-red-500/30';
+          default: return 'bg-zinc-800/80 text-zinc-300 border-zinc-700';
+        }
+      };
+
+      const selectedTour = data.tournaments.find((t) => t.id === regForm.tournamentId) || data.tournaments[0];
+      const payableAmount = selectedTour?.entryFee ?? data.prizeConfig.entryFee;
+      const upiLink = `upi://pay?pa=${encodeURIComponent(data.prizeConfig.upiId)}&pn=${encodeURIComponent(
+        data.prizeConfig.upiPayeeName
+      )}&am=${payableAmount}&cu=INR`;
+      const activeLiveTeam = computedTeams.find((t) => t.id === selectedLiveTeamId) || computedTeams[0];
+
+      return (
+        <div className="min-h-screen bg-[#09090B] text-zinc-100">
+          {toast && (
+            <div className="fixed bottom-5 right-5 z-[100] bg-[#121215] border border-zinc-700 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 text-xs font-medium">
+              <Icon name="checkCircle" className="w-4 h-4 text-red-500 shrink-0" />
+              <span>{toast}</span>
+            </div>
+          )}
+
+          {/* HEADER */}
+          <header className="sticky top-0 z-40 bg-[#09090B]/90 backdrop-blur-md border-b border-zinc-800/80">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+              <a href="#overview" className="flex items-center gap-3">
+                <DarkSyndicateEmblem className="w-9 h-9" />
+                <div>
+                  <span className="font-orbitron font-bold text-sm sm:text-base tracking-wider text-white block leading-none">
+                    DARK <span className="text-red-600">SYNDICATE</span>
+                  </span>
+                  <span className="text-[10px] tracking-[0.2em] text-zinc-500 uppercase block mt-0.5">
+                    FREE FIRE ESPORTS
+                  </span>
+                </div>
+              </a>
+
+              <nav className="hidden md:flex items-center gap-7 text-xs font-medium text-zinc-400">
+                <a href="#overview" className="hover:text-white transition">Overview</a>
+                <a href="#tournaments" className="hover:text-white transition">Tournaments</a>
+                <a href="#leaderboard" className="hover:text-white transition">Leaderboard</a>
+                <a href="#roster" className="hover:text-white transition">Roster</a>
+                <a href="#join" className="hover:text-white transition">Join DS</a>
+              </nav>
+
+              <div className="hidden sm:flex items-center gap-2.5">
+                <button
+                  onClick={() => { setRegStep(4); setRegModalOpen(true); }}
+                  className="px-3.5 py-2 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition"
+                >
+                  Registration Status
+                </button>
+                <button
+                  onClick={() => (isAdmin ? setAdminPanelOpen(true) : setAdminLoginOpen(true))}
+                  title="Admin Portal"
+                  className={`p-2 rounded-lg border transition ${
+                    isAdmin
+                      ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                      : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Icon name={isAdmin ? 'unlock' : 'lock'} className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 md:hidden">
+                <button
+                  onClick={() => (isAdmin ? setAdminPanelOpen(true) : setAdminLoginOpen(true))}
+                  className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400"
+                  aria-label="Admin"
+                >
+                  <Icon name={isAdmin ? 'unlock' : 'lock'} className={`w-4 h-4 ${isAdmin ? 'text-emerald-400' : ''}`} />
+                </button>
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200"
+                  aria-label="Menu"
+                >
+                  <Icon name={mobileMenuOpen ? 'x' : 'menu'} className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {mobileMenuOpen && (
+              <div className="md:hidden bg-[#121215] border-b border-zinc-800 px-4 py-4 space-y-2">
+                {[
+                  { href: '#overview', label: 'Overview' },
+                  { href: '#tournaments', label: 'Tournaments & ₹150 Entry' },
+                  { href: '#leaderboard', label: 'Live Match Center & Leaderboard' },
+                  { href: '#roster', label: 'Team Roster' },
+                  { href: '#join', label: 'Join DS & About' }
+                ].map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2 px-3 rounded-lg text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                <div className="pt-2 grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setRegStep(4); setRegModalOpen(true); }}
+                    className="py-2.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-200 border border-zinc-800"
+                  >
+                    Track Status
+                  </button>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); openRegisterModal('tour-1'); }}
+                    className="py-2.5 rounded-lg text-xs font-semibold bg-red-600 text-white"
+                  >
+                    Register (₹{data.prizeConfig.entryFee})
+                  </button>
+                </div>
+              </div>
+            )}
+          </header>
+
+          {/* HERO SECTION */}
+          <section id="overview" className="relative py-20 sm:py-28 border-b border-zinc-800/80 overflow-hidden">
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle at 50% 25%, rgba(220, 38, 38, 0.14) 0%, rgba(9, 9, 11, 0) 65%)'
+              }}
+            />
+
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
+              <div className="max-w-3xl mx-auto text-center">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#121215] border border-zinc-800 text-[11px] font-orbitron tracking-[0.18em] text-zinc-400 uppercase mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                  GARENA FREE FIRE • EST. COMPETITIVE DIVISION
+                </div>
+
+                <h1 className="font-orbitron font-black text-4xl sm:text-6xl tracking-tight text-white uppercase leading-[1.1]">
+                  WE ARE <span className="text-red-600">DARK SYNDICATE</span>
+                </h1>
+
+                <p className="mt-5 text-base sm:text-lg text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+                  Built for competition. United by ambition. Dominate the game. Own the battle.
+                </p>
+
+                <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                  <button
+                    onClick={() => openRegisterModal('tour-1')}
+                    className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-orbitron font-bold text-xs tracking-wider uppercase bg-red-600 hover:bg-red-500 text-white transition flex items-center justify-center gap-2"
+                  >
+                    REGISTER SQUAD (₹{data.prizeConfig.entryFee}) <Icon name="chevronRight" className="w-4 h-4" />
+                  </button>
+                  <a
+                    href="#roster"
+                    className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-orbitron font-bold text-xs tracking-wider uppercase bg-[#121215] hover:bg-zinc-800 text-zinc-200 border border-zinc-800 transition text-center"
+                  >
+                    EXPLORE ROSTER
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: 'CHAMPIONSHIPS', value: '04 TITLES' },
+                  { label: 'TOTAL KILLS', value: `${totalSquadKills.toLocaleString()} ELIMS` },
+                  { label: 'BOOYAH RATE', value: '38.4%' },
+                  { label: 'ACTIVE ROSTER', value: `${data.roster.length} OPERATIVES` }
+                ].map((stat, idx) => (
+                  <div key={idx} className="bg-[#121215] border border-zinc-800/90 rounded-xl p-5 text-center">
+                    <div className="text-[11px] font-orbitron tracking-widest text-zinc-500 uppercase">{stat.label}</div>
+                    <div className="mt-1.5 font-orbitron font-bold text-xl sm:text-2xl text-white">{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* TOURNAMENTS & PRIZE POOL */}
+          <section id="tournaments" className="py-20 border-b border-zinc-800/80">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                <div>
+                  <span className="text-xs font-orbitron tracking-[0.2em] text-red-500 uppercase">COMPETITIVE CIRCUIT</span>
+                  <h2 className="mt-1 font-orbitron font-bold text-2xl sm:text-3xl text-white uppercase">
+                    PRIZE POOL & TOURNAMENTS
+                  </h2>
+                </div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-xs font-orbitron font-bold text-white">
+                  TEAM ENTRY — <span className="text-red-500">₹{data.prizeConfig.entryFee}</span>
+                </div>
+              </div>
+
+              <div className="mb-8 px-4 py-3.5 rounded-xl bg-[#121215] border border-red-600/30 text-center">
+                <p className="font-orbitron font-bold text-xs sm:text-sm tracking-wider text-zinc-100">
+                  {data.prizeConfig.bannerText}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+                <div className="bg-[#121215] border border-amber-500/40 rounded-2xl p-6 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs font-orbitron font-bold text-amber-400 uppercase tracking-wider">
+                        1ST PLACE • CHAMPIONS
+                      </span>
+                      <Icon name="crown" className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div className="font-orbitron font-black text-3xl sm:text-4xl text-white">
+                      ₹{data.prizeConfig.firstPrize}
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-1">Cash Prize</p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center gap-2 text-xs text-zinc-300">
+                    <Icon name="checkCircle" className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>{data.prizeConfig.winnerRewardText}</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#121215] border border-zinc-400/35 rounded-2xl p-6 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs font-orbitron font-bold text-zinc-300 uppercase tracking-wider">
+                        2ND PLACE • RUNNERS UP
+                      </span>
+                      <Icon name="medal" className="w-5 h-5 text-zinc-300" />
+                    </div>
+                    <div className="font-orbitron font-black text-3xl sm:text-4xl text-white">
+                      ₹{data.prizeConfig.secondPrize}
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-1">Cash Prize</p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center gap-2 text-xs text-zinc-300">
+                    <Icon name="checkCircle" className="w-4 h-4 text-zinc-300 shrink-0" />
+                    <span>{data.prizeConfig.winnerRewardText}</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#121215] border border-orange-500/35 rounded-2xl p-6 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs font-orbitron font-bold text-orange-400 uppercase tracking-wider">
+                        3RD PLACE • THIRD PLACE
+                      </span>
+                      <Icon name="award" className="w-5 h-5 text-orange-400" />
+                    </div>
+                    <div className="font-orbitron font-black text-3xl sm:text-4xl text-white">
+                      ₹{data.prizeConfig.thirdPrize}
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-1">Cash Prize</p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center gap-2 text-xs text-zinc-300">
+                    <Icon name="checkCircle" className="w-4 h-4 text-orange-400 shrink-0" />
+                    <span>{data.prizeConfig.winnerRewardText}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                {data.tournaments.map((tour) => (
+                  <div key={tour.id} className="bg-[#121215] border border-zinc-800 hover:border-zinc-700 rounded-2xl p-6 flex flex-col justify-between transition">
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-4">
+                        <span className="text-[11px] font-mono text-zinc-500 uppercase">FREE FIRE SQUAD</span>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-orbitron font-bold uppercase border ${
+                            tour.status === 'Live'
+                              ? 'bg-red-500/10 text-red-400 border-red-500/40'
+                              : tour.status === 'Upcoming'
+                              ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                              : 'bg-zinc-900 text-zinc-400 border-zinc-800'
+                          }`}
+                        >
+                          {tour.status}
+                        </span>
+                      </div>
+
+                      <h3 className="font-orbitron font-bold text-lg text-white">{tour.name}</h3>
+
+                      <div className="mt-4 space-y-2 text-xs text-zinc-400">
+                        <div className="flex items-center gap-2">
+                          <Icon name="calendar" className="w-3.5 h-3.5 text-zinc-500" />
+                          <span>{tour.date} • {tour.time}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Icon name="crosshair" className="w-3.5 h-3.5 text-zinc-500" />
+                          <span>{tour.format}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Icon name="users" className="w-3.5 h-3.5 text-zinc-500" />
+                          <span>Slots: {tour.slotsFilled} / {tour.slotsTotal} Squads</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 pt-4 border-t border-zinc-800/80">
+                      <div className="flex items-center justify-between text-xs mb-4">
+                        <div>
+                          <span className="text-zinc-500 block">Entry Fee</span>
+                          <span className="font-orbitron font-bold text-white">₹{tour.entryFee} / Team</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-zinc-500 block">Total Pool</span>
+                          <span className="font-orbitron font-bold text-amber-400">₹{tour.prizePool} + Sleeves</span>
+                        </div>
+                      </div>
+
+                      {tour.status !== 'Completed' ? (
+                        <button
+                          onClick={() => openRegisterModal(tour.id)}
+                          className="w-full py-3 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white transition"
+                        >
+                          Register Team
+                        </button>
+                      ) : (
+                        <a
+                          href="#leaderboard"
+                          className="block text-center w-full py-3 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition"
+                        >
+                          View Standings
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* LIVE MATCH CENTER & LEADERBOARD */}
+          <section id="leaderboard" className="py-20 border-b border-zinc-800/80">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
+                <div>
+                  <div className="inline-flex items-center gap-2 text-xs font-orbitron tracking-[0.2em] text-red-500 uppercase">
+                    <Icon name="radio" className="w-3.5 h-3.5" /> TOURNAMENT TELEMETRY
+                  </div>
+                  <h2 className="mt-1 font-orbitron font-bold text-2xl sm:text-3xl text-white uppercase">
+                    MATCH CENTER & LEADERBOARD
+                  </h2>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 bg-[#121215] p-1.5 rounded-xl border border-zinc-800">
+                  {[
+                    { id: 'standings', label: 'Team Standings' },
+                    { id: 'players', label: 'Player Kill Leaders' },
+                    { id: 'live', label: 'Round-by-Round Live Center' },
+                    { id: 'points', label: 'Points System' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setCenterTab(tab.id)}
+                      className={`px-3.5 py-2 rounded-lg text-xs font-medium transition ${
+                        centerTab === tab.id ? 'bg-red-600 text-white font-semibold' : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {centerTab === 'standings' && (
+                <div className="bg-[#121215] border border-zinc-800 rounded-2xl overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-xs text-zinc-400">Live aggregated standings • Top 3 podium highlighted</span>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-zinc-500">Sort by:</span>
+                      {[
+                        { key: 'totalPoints', label: 'Total Pts' },
+                        { key: 'kills', label: 'Kills' },
+                        { key: 'booyahs', label: 'Booyahs' },
+                        { key: 'matchesPlayed', label: 'Matches' }
+                      ].map((s) => (
+                        <button
+                          key={s.key}
+                          onClick={() => setSortField(s.key)}
+                          className={`px-2.5 py-1 rounded text-xs transition ${
+                            sortField === s.key ? 'bg-zinc-800 text-white font-semibold' : 'text-zinc-400 hover:text-zinc-200'
+                          }`}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-zinc-800 text-[11px] font-orbitron uppercase text-zinc-500">
+                          <th className="py-3.5 px-5">Rank</th>
+                          <th className="py-3.5 px-5">Team</th>
+                          <th className="py-3.5 px-4 text-center">Matches</th>
+                          <th className="py-3.5 px-4 text-center">Booyahs</th>
+                          <th className="py-3.5 px-4 text-center">Kills</th>
+                          <th className="py-3.5 px-4 text-center">Placement Pts</th>
+                          <th className="py-3.5 px-5 text-right">Total Pts</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-800/60 text-sm">
+                        {sortedTeams.map((team, index) => {
+                          const rank = index + 1;
+                          const podiumBorder =
+                            rank === 1
+                              ? 'border-l-4 border-l-amber-400 bg-amber-500/[0.03]'
+                              : rank === 2
+                              ? 'border-l-4 border-l-zinc-300 bg-zinc-300/[0.03]'
+                              : rank === 3
+                              ? 'border-l-4 border-l-orange-500 bg-orange-500/[0.03]'
+                              : 'border-l-4 border-l-transparent';
+
+                          return (
+                            <tr
+                              key={team.id}
+                              onClick={() => { setSelectedLiveTeamId(team.id); setCenterTab('live'); }}
+                              className={`${podiumBorder} hover:bg-zinc-900/60 transition cursor-pointer`}
+                            >
+                              <td className="py-3.5 px-5 font-orbitron font-bold text-xs text-zinc-300">#{rank}</td>
+                              <td className="py-3.5 px-5">
+                                <div className="flex items-center gap-2.5">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-orbitron font-bold bg-zinc-900 text-red-500 border border-zinc-800">
+                                    {team.tag}
+                                  </span>
+                                  <span className="font-semibold text-white">{team.name}</span>
+                                </div>
+                              </td>
+                              <td className="py-3.5 px-4 text-center text-zinc-400 font-mono text-xs">{team.matchesPlayed}</td>
+                              <td className="py-3.5 px-4 text-center font-semibold text-amber-400">{team.booyahs}</td>
+                              <td className="py-3.5 px-4 text-center text-zinc-300 font-mono text-xs">{team.kills}</td>
+                              <td className="py-3.5 px-4 text-center text-zinc-400 font-mono text-xs">{team.placementPoints}</td>
+                              <td className="py-3.5 px-5 text-right font-orbitron font-bold text-white">{team.totalPoints}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {centerTab === 'players' && (
+                <div className="bg-[#121215] border border-zinc-800 rounded-2xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-zinc-800 text-[11px] font-orbitron uppercase text-zinc-500">
+                          <th className="py-3.5 px-5">Rank</th>
+                          <th className="py-3.5 px-5">Player</th>
+                          <th className="py-3.5 px-4">Role</th>
+                          <th className="py-3.5 px-4 text-center">Matches</th>
+                          <th className="py-3.5 px-4 text-center">MVPs</th>
+                          <th className="py-3.5 px-4 text-center">Avg Pos</th>
+                          <th className="py-3.5 px-5 text-right">Total Kills</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-800/60 text-sm">
+                        {sortedPlayers.map((p, idx) => (
+                          <tr key={p.id} onClick={() => setActivePlayer(p)} className="hover:bg-zinc-900/60 transition cursor-pointer">
+                            <td className="py-3.5 px-5 font-orbitron font-bold text-xs text-red-500">#{idx + 1}</td>
+                            <td className="py-3.5 px-5 font-semibold text-white">{p.ign}</td>
+                            <td className="py-3.5 px-4 text-xs text-zinc-400">{p.role}</td>
+                            <td className="py-3.5 px-4 text-center font-mono text-xs text-zinc-400">{p.matches}</td>
+                            <td className="py-3.5 px-4 text-center text-amber-400 font-semibold">{p.mvps}</td>
+                            <td className="py-3.5 px-4 text-center font-mono text-xs text-zinc-300">#{p.avgPlacement}</td>
+                            <td className="py-3.5 px-5 text-right font-orbitron font-bold text-white">{p.kills}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {centerTab === 'live' && (
+                <div className="bg-[#121215] border border-zinc-800 rounded-2xl p-6 space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-800">
+                    <div>
+                      <div className="inline-flex items-center gap-2 text-xs font-orbitron font-bold text-red-500 uppercase">
+                        <span className="w-2 h-2 rounded-full bg-red-600" /> {data.liveMatchInfo.statusLabel}
+                      </div>
+                      <h3 className="font-orbitron font-bold text-lg text-white mt-1">
+                        {data.liveMatchInfo.tournamentName} — {data.liveMatchInfo.currentMap}
+                      </h3>
+                    </div>
+
+                    <select
+                      value={activeLiveTeam?.id || ''}
+                      onChange={(e) => setSelectedLiveTeamId(e.target.value)}
+                      className="px-3.5 py-2 rounded-lg bg-[#09090B] border border-zinc-800 text-xs font-orbitron text-white"
+                    >
+                      {computedTeams.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name} ({t.totalPoints} PTS)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {(activeLiveTeam?.rounds || []).map((r, i) => {
+                      const placePts = data.pointsSystem.placementPoints[r.placement] ?? 0;
+                      const killPts = (Number(r.kills) || 0) * (Number(data.pointsSystem.killPoints) || 1);
+                      const bonus =
+                        (Number(r.bonus) || 0) +
+                        (Number(r.placement) === 1 ? Number(data.pointsSystem.booyahBonus) || 0 : 0);
+
+                      return (
+                        <div key={i} className="p-4 rounded-xl bg-[#09090B] border border-zinc-800/90">
+                          <div className="text-xs font-orbitron font-bold text-red-500">{r.round}</div>
+                          <div className="mt-3 flex items-baseline justify-between">
+                            <span className="text-xs text-zinc-400">Placement #{r.placement}</span>
+                            <span className="font-mono text-xs text-zinc-300">{placePts} pts</span>
+                          </div>
+                          <div className="mt-1 flex items-baseline justify-between">
+                            <span className="text-xs text-zinc-400">Eliminations ({r.kills})</span>
+                            <span className="font-mono text-xs text-zinc-300">{killPts} pts</span>
+                          </div>
+                          <div className="mt-3 pt-2.5 border-t border-zinc-800 flex items-center justify-between">
+                            <span className="text-[11px] text-zinc-500 uppercase">Round Total</span>
+                            <span className="font-orbitron font-bold text-base text-white">
+                              {placePts + killPts + bonus} PTS
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {centerTab === 'points' && (
+                <div className="bg-[#121215] border border-zinc-800 rounded-2xl p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <div>
+                      <h3 className="font-orbitron font-bold text-base text-white uppercase">TOURNAMENT SCORING MATRIX</h3>
+                      <p className="text-xs text-zinc-400 mt-0.5">Configurable by tournament admins in real time.</p>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="px-3 py-1.5 rounded-lg bg-[#09090B] border border-zinc-800 text-zinc-300">
+                        Kill Point: <strong className="text-white">{data.pointsSystem.killPoints} PT</strong>
+                      </span>
+                      <span className="px-3 py-1.5 rounded-lg bg-[#09090B] border border-zinc-800 text-zinc-300">
+                        Booyah Bonus: <strong className="text-amber-400">+{data.pointsSystem.booyahBonus} PTS</strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {Object.entries(data.pointsSystem.placementPoints).map(([rank, pts]) => (
+                      <div key={rank} className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 flex items-center justify-between">
+                        <span className="text-xs font-orbitron text-zinc-400">#{rank}</span>
+                        <span className="font-orbitron font-bold text-sm text-white">{pts} PTS</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* TEAM ROSTER */}
+          <section id="roster" className="py-20 border-b border-zinc-800/80">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+                <div>
+                  <span className="text-xs font-orbitron tracking-[0.2em] text-red-500 uppercase">ACTIVE LINEUP</span>
+                  <h2 className="mt-1 font-orbitron font-bold text-2xl sm:text-3xl text-white uppercase">
+                    DARK SYNDICATE ROSTER
+                  </h2>
+                </div>
+                <p className="text-xs text-zinc-400">
+                  Select any player card to inspect full career telemetry and recent match logs.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {data.roster.map((player) => (
+                  <div
+                    key={player.id}
+                    onClick={() => setActivePlayer(player)}
+                    className="bg-[#121215] border border-zinc-800 hover:border-red-600/60 rounded-2xl p-4 transition cursor-pointer group"
+                  >
+                    <SleekPlayerAvatar role={player.role} number={player.number} />
+
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-orbitron font-bold text-base text-white group-hover:text-red-500 transition">
+                          {player.ign}
+                        </h3>
+                        <span className="text-xs font-mono text-zinc-500">#{player.number}</span>
+                      </div>
+                      <p className="text-xs text-zinc-500 mt-0.5">{player.realName}</p>
+
+                      <div className="mt-4 pt-3 border-t border-zinc-800/80 grid grid-cols-3 gap-2 text-center">
+                        <div>
+                          <span className="text-[10px] text-zinc-500 block uppercase">Kills</span>
+                          <span className="font-orbitron font-bold text-sm text-white">{player.kills}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-zinc-500 block uppercase">MVPs</span>
+                          <span className="font-orbitron font-bold text-sm text-amber-400">{player.mvps}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-zinc-500 block uppercase">Avg Pos</span>
+                          <span className="font-orbitron font-bold text-sm text-zinc-300">#{player.avgPlacement}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between text-xs">
+                        <a
+                          href={player.social || '#'}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-zinc-400 hover:text-white flex items-center gap-1"
+                        >
+                          <Icon name="externalLink" className="w-3 h-3" /> {player.socialHandle}
+                        </a>
+                        <span className="text-red-500 font-medium">Telemetry →</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ABOUT US, ACHIEVEMENTS & RECRUITMENT */}
+          <section id="join" className="py-20">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-20">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-6 space-y-5">
+                  <span className="text-xs font-orbitron tracking-[0.2em] text-red-500 uppercase">ABOUT DARK SYNDICATE</span>
+                  <h2 className="font-orbitron font-bold text-2xl sm:text-3xl text-white uppercase">
+                    DISCIPLINE. CONSISTENCY. AMBITION.
+                  </h2>
+                  <p className="text-sm text-zinc-400 leading-relaxed">
+                    DARK SYNDICATE (DS) is an independent competitive Garena Free Fire esports organization focused on structured squad coordination, disciplined execution, and fair community tournament hosting.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                    <div className="p-4 rounded-xl bg-[#121215] border border-zinc-800">
+                      <Icon name="target" className="w-4 h-4 text-red-500 mb-2" />
+                      <h3 className="font-orbitron font-bold text-xs text-white uppercase">Our Vision</h3>
+                      <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+                        Build a respected Free Fire competitive roster and transparent tournament circuit.
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-[#121215] border border-zinc-800">
+                      <Icon name="shield" className="w-4 h-4 text-red-500 mb-2" />
+                      <h3 className="font-orbitron font-bold text-xs text-white uppercase">Our Mission</h3>
+                      <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+                        Develop mechanically sharp athletes through daily scrims and tactical VOD reviews.
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-[#121215] border border-zinc-800">
+                      <Icon name="zap" className="w-4 h-4 text-red-500 mb-2" />
+                      <h3 className="font-orbitron font-bold text-xs text-white uppercase">Mindset</h3>
+                      <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+                        Calculated aggression, clear voice comms, and accountability in every endgame zone.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 space-y-4">
+                  <span className="text-xs font-orbitron tracking-[0.2em] text-red-500 uppercase">HONORS & MILESTONES</span>
+                  <h3 className="font-orbitron font-bold text-xl text-white uppercase">COMPETITIVE ACHIEVEMENTS</h3>
+
+                  <div className="space-y-3">
+                    {data.achievements.map((ach) => (
+                      <div key={ach.id} className="p-4 rounded-xl bg-[#121215] border border-zinc-800 flex items-start justify-between gap-4">
+                        <div>
+                          <span className="text-[11px] font-orbitron font-bold text-amber-400">{ach.placement}</span>
+                          <h4 className="font-orbitron font-bold text-sm text-white mt-0.5">{ach.title}</h4>
+                          <p className="text-xs text-zinc-400 mt-1">{ach.details}</p>
+                        </div>
+                        <span className="text-[11px] font-mono text-zinc-500 shrink-0">{ach.date}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* RECRUITMENT */}
+              <div className="bg-[#121215] border border-zinc-800 rounded-2xl p-6 sm:p-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  <div className="lg:col-span-5 space-y-4">
+                    <span className="text-xs font-orbitron tracking-[0.2em] text-red-500 uppercase">ROSTER RECRUITMENT</span>
+                    <h2 className="font-orbitron font-bold text-2xl sm:text-3xl text-white uppercase">
+                      YOUR NEXT LEVEL STARTS HERE.
+                    </h2>
+                    <p className="text-sm text-zinc-400 leading-relaxed">
+                      We are recruiting committed Garena Free Fire players for upcoming tier-1 scrims and tournament rosters.
+                    </p>
+
+                    <div className="pt-2 space-y-2 text-xs text-zinc-300">
+                      <div className="font-orbitron font-bold text-white uppercase">Open Roles & Criteria</div>
+                      <p className="text-zinc-400">• Roles: Rusher, IGL, Sniper, Support</p>
+                      <p className="text-zinc-400">• Minimum 3.5+ Squad K/D & Heroic/Master rank</p>
+                      <p className="text-zinc-400">• Clear mic communication & daily evening availability</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-7">
+                    {recruitSuccess ? (
+                      <div className="p-6 rounded-xl bg-[#09090B] border border-emerald-500/40 text-center space-y-3">
+                        <Icon name="checkCircle" className="w-10 h-10 text-emerald-400 mx-auto" />
+                        <h3 className="font-orbitron font-bold text-base text-white">APPLICATION SUBMITTED</h3>
+                        <p className="text-xs text-zinc-400">
+                          Our scouting team will review your Free Fire UID and contact you for trial lobbies.
+                        </p>
+                        <button
+                          onClick={() => setRecruitSuccess(false)}
+                          className="px-4 py-2 rounded-lg text-xs font-medium bg-zinc-900 text-zinc-200 border border-zinc-800"
+                        >
+                          Submit Another Application
+                        </button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleRecruitSubmit} className="space-y-4">
+                        {recruitError && (
+                          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/40 text-red-400 text-xs flex items-center gap-2">
+                            <Icon name="alertCircle" className="w-4 h-4 shrink-0" /> {recruitError}
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs text-zinc-400 mb-1.5">Player In-Game Name *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. IND・STRIKER"
+                              value={recruitForm.playerName}
+                              onChange={(e) => setRecruitForm({ ...recruitForm, playerName: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-600"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-zinc-400 mb-1.5">Free Fire UID *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. 2481904412"
+                              value={recruitForm.uid}
+                              onChange={(e) => setRecruitForm({ ...recruitForm, uid: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm font-mono focus:outline-none focus:border-red-600"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs text-zinc-400 mb-1.5">Preferred Role *</label>
+                            <select
+                              value={recruitForm.role}
+                              onChange={(e) => setRecruitForm({ ...recruitForm, role: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-600"
+                            >
+                              <option value="Rusher">Rusher</option>
+                              <option value="IGL">IGL</option>
+                              <option value="Sniper">Sniper</option>
+                              <option value="Support">Support</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs text-zinc-400 mb-1.5">Discord / Instagram Handle *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. @striker_ff or Discord#1234"
+                              value={recruitForm.contact}
+                              onChange={(e) => setRecruitForm({ ...recruitForm, contact: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-600"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs text-zinc-400 mb-1.5">Competitive Experience</label>
+                          <textarea
+                            rows={2}
+                            placeholder="Previous tournament experience, K/D ratio, and device..."
+                            value={recruitForm.experience}
+                            onChange={(e) => setRecruitForm({ ...recruitForm, experience: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-600"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="px-6 py-3 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white transition"
+                        >
+                          Submit Tryout Application
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FOOTER */}
+          <footer className="border-t border-zinc-800/80 py-10 bg-[#09090B]">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-3">
+                <DarkSyndicateEmblem className="w-8 h-8" />
+                <div>
+                  <div className="font-orbitron font-bold text-xs text-white">DARK SYNDICATE (DS)</div>
+                  <div className="text-[11px] text-zinc-500">Garena Free Fire Competitive Esports</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 text-xs text-zinc-400">
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-1.5 transition">
+                  <Icon name="instagram" className="w-4 h-4 text-red-500" /> Instagram
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-1.5 transition">
+                  <Icon name="youtube" className="w-4 h-4 text-red-500" /> YouTube
+                </a>
+                <a href="https://discord.com" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-1.5 transition">
+                  <Icon name="discord" className="w-4 h-4 text-red-500" /> Discord
+                </a>
+              </div>
+
+              <div className="text-[11px] text-zinc-500 text-center sm:text-right">
+                © {new Date().getFullYear()} DARK SYNDICATE. All rights reserved.
+              </div>
+            </div>
+          </footer>
+
+          {/* PLAYER TELEMETRY MODAL */}
+          {activePlayer && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-[#121215] border border-zinc-800 rounded-2xl max-w-xl w-full p-6 relative">
+                <button
+                  onClick={() => setActivePlayer(null)}
+                  className="absolute top-4 right-4 p-2 rounded-lg bg-zinc-900 text-zinc-400 hover:text-white"
+                >
+                  <Icon name="x" className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center gap-4 pb-5 border-b border-zinc-800">
+                  <DarkSyndicateEmblem className="w-12 h-12" />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-orbitron font-bold bg-red-600/15 text-red-400 border border-red-500/30">
+                        {activePlayer.role}
+                      </span>
+                      <span className="text-xs font-mono text-zinc-500">#{activePlayer.number} • UID {activePlayer.uid}</span>
+                    </div>
+                    <h3 className="font-orbitron font-bold text-xl text-white mt-1">{activePlayer.ign}</h3>
+                    <p className="text-xs text-zinc-400">{activePlayer.realName} ({activePlayer.socialHandle})</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-5">
+                  <div className="p-3 rounded-xl bg-[#09090B] border border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 uppercase block">Total Kills</span>
+                    <span className="font-orbitron font-bold text-lg text-white">{activePlayer.kills}</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#09090B] border border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 uppercase block">MVPs</span>
+                    <span className="font-orbitron font-bold text-lg text-amber-400">{activePlayer.mvps}</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#09090B] border border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 uppercase block">Matches</span>
+                    <span className="font-orbitron font-bold text-lg text-white">{activePlayer.matches}</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#09090B] border border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 uppercase block">Avg Place</span>
+                    <span className="font-orbitron font-bold text-lg text-emerald-400">#{activePlayer.avgPlacement}</span>
+                  </div>
+                </div>
+
+                <div className="text-xs font-orbitron text-zinc-400 uppercase mb-2.5">Recent Performance</div>
+                <div className="space-y-2">
+                  {(activePlayer.recentMatches || []).map((m, i) => (
+                    <div key={i} className="p-3 rounded-xl bg-[#09090B] border border-zinc-800 flex items-center justify-between text-xs">
+                      <div>
+                        <div className="font-medium text-white flex items-center gap-2">
+                          {m.match}
+                          {m.mvp && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-orbitron bg-amber-500/15 text-amber-400">
+                              MVP
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-zinc-500 mt-0.5">Placement #{m.placement} • {m.kills} Kills</div>
+                      </div>
+                      <div className="font-orbitron font-bold text-zinc-200">+{m.points} PTS</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* MULTI-STEP REGISTRATION & UPI PAYMENT MODAL */}
+          {regModalOpen && (
+            <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+              <div className="bg-[#121215] border border-zinc-800 rounded-2xl max-w-xl w-full p-5 sm:p-7 relative max-h-[92vh] overflow-y-auto">
+                <button
+                  onClick={() => setRegModalOpen(false)}
+                  className="absolute top-4 right-4 p-2 rounded-lg bg-zinc-900 text-zinc-400 hover:text-white"
+                >
+                  <Icon name="x" className="w-4 h-4" />
+                </button>
+
+                <div className="flex flex-wrap gap-1.5 mb-6 pr-8">
+                  {[
+                    { step: 1, label: '1. Squad Form' },
+                    { step: 2, label: '2. UPI Payment' },
+                    { step: 3, label: '3. Submitted' },
+                    { step: 4, label: 'Track Status' }
+                  ].map((s) => (
+                    <button
+                      key={s.step}
+                      onClick={() => { if (s.step === 1 || s.step === 4) setRegStep(s.step); }}
+                      className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition ${
+                        regStep === s.step ? 'bg-red-600 text-white font-semibold' : 'bg-[#09090B] text-zinc-400 border border-zinc-800'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+
+                {regStep === 1 && (
+                  <form onSubmit={handleStep1Submit} className="space-y-4">
+                    <div>
+                      <h3 className="font-orbitron font-bold text-lg text-white uppercase">SQUAD REGISTRATION</h3>
+                      <p className="text-xs text-zinc-400 mt-0.5">
+                        Fixed Team Entry: <strong className="text-white">₹{payableAmount}</strong> • Top 3 Win Cash + Free Finger Sleeves
+                      </p>
+                    </div>
+
+                    {regError && (
+                      <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/40 text-red-400 text-xs flex items-center gap-2">
+                        <Icon name="alertCircle" className="w-4 h-4 shrink-0" /> {regError}
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Select Tournament *</label>
+                      <select
+                        value={regForm.tournamentId}
+                        onChange={(e) => setRegForm({ ...regForm, tournamentId: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm"
+                      >
+                        {data.tournaments.filter((t) => t.status !== 'Completed').map((t) => (
+                          <option key={t.id} value={t.id}>{t.name} ({t.date}) — ₹{t.entryFee}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">Team Name *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. HYDERABAD TITANS"
+                          value={regForm.teamName}
+                          onChange={(e) => setRegForm({ ...regForm, teamName: e.target.value })}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">Captain Name *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Captain Name"
+                          value={regForm.captainName}
+                          onChange={(e) => setRegForm({ ...regForm, captainName: e.target.value })}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 space-y-2.5">
+                      <div className="text-[11px] font-orbitron text-zinc-400 uppercase">4-Player Roster & Free Fire UIDs</div>
+                      {[
+                        { n: 'p1Name', u: 'p1Uid', p: 'Player 1 (Captain) IGN *', req: true },
+                        { n: 'p2Name', u: 'p2Uid', p: 'Player 2 IGN *', req: true },
+                        { n: 'p3Name', u: 'p3Uid', p: 'Player 3 IGN', req: false },
+                        { n: 'p4Name', u: 'p4Uid', p: 'Player 4 IGN', req: false }
+                      ].map((slot, idx) => (
+                        <div key={idx} className="grid grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            required={slot.req}
+                            placeholder={slot.p}
+                            value={regForm[slot.n]}
+                            onChange={(e) => setRegForm({ ...regForm, [slot.n]: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-xs"
+                          />
+                          <input
+                            type="text"
+                            required={slot.req}
+                            placeholder={`Free Fire UID ${slot.req ? '*' : ''}`}
+                            value={regForm[slot.u]}
+                            onChange={(e) => setRegForm({ ...regForm, [slot.u]: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-xs font-mono"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">WhatsApp / Discord Contact *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="+91 98765 43210 / @captain"
+                        value={regForm.contact}
+                        onChange={(e) => setRegForm({ ...regForm, contact: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm"
+                      />
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 flex items-center justify-between">
+                      <span className="text-xs text-zinc-400">Total Payable Team Entry</span>
+                      <span className="font-orbitron font-bold text-lg text-white">₹{payableAmount}</span>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white transition"
+                    >
+                      Continue to UPI Payment (₹{payableAmount}) →
+                    </button>
+                  </form>
+                )}
+
+                {regStep === 2 && activeReg && (
+                  <div className="space-y-5">
+                    <div className="pb-3 border-b border-zinc-800 flex items-center justify-between">
+                      <div>
+                        <h3 className="font-orbitron font-bold text-lg text-white uppercase">UPI PAYMENT</h3>
+                        <p className="text-xs text-zinc-400">
+                          {activeReg.tournamentName} • <strong className="text-white">{activeReg.teamName}</strong>
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-zinc-500 block uppercase">Amount</span>
+                        <span className="font-orbitron font-black text-xl text-white">₹{activeReg.amount}</span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 flex flex-col sm:flex-row items-center gap-5">
+                      <UpiQrCode upiId={data.prizeConfig.upiId} amount={activeReg.amount} payeeName={data.prizeConfig.upiPayeeName} />
+
+                      <div className="flex-1 w-full space-y-3">
+                        <div>
+                          <span className="text-[11px] text-zinc-500 uppercase block mb-1">Official UPI ID</span>
+                          <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg bg-[#121215] border border-zinc-800">
+                            <span className="font-mono font-bold text-sm text-white select-all">{data.prizeConfig.upiId}</span>
+                            <button
+                              type="button"
+                              onClick={handleCopyUpi}
+                              className="px-2.5 py-1.5 rounded text-[11px] font-semibold bg-zinc-800 hover:bg-zinc-700 text-white flex items-center gap-1"
+                            >
+                              <Icon name={copiedUpi ? 'check' : 'copy'} className={`w-3.5 h-3.5 ${copiedUpi ? 'text-emerald-400' : ''}`} />
+                              {copiedUpi ? 'Copied' : 'Copy UPI ID'}
+                            </button>
+                          </div>
+                        </div>
+
+                        <a
+                          href={upiLink}
+                          className="w-full py-3 px-4 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white transition flex items-center justify-center gap-2"
+                        >
+                          <Icon name="smartphone" className="w-4 h-4" /> Pay via UPI App
+                        </a>
+
+                        <p className="text-[11px] text-zinc-500 text-center">
+                          Supports Google Pay, PhonePe, Paytm & all UPI apps
+                        </p>
+                      </div>
+                    </div>
+
+                    <form onSubmit={handleStep2PaymentSubmit} className="space-y-3.5">
+                      {regError && (
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/40 text-red-400 text-xs">
+                          {regError}
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="block text-xs text-zinc-300 mb-1">UPI Transaction / UTR Reference Number *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Enter 12-digit UTR number after payment"
+                          value={payForm.utrNumber}
+                          onChange={(e) => setPayForm({ ...payForm, utrNumber: e.target.value })}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm font-mono focus:outline-none focus:border-red-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">Payment Screenshot Note / File (Optional)</label>
+                        <label className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-dashed border-zinc-700 text-zinc-400 text-xs flex items-center justify-between cursor-pointer hover:border-zinc-500">
+                          <span className="truncate">{payForm.screenshotName || 'Attach screenshot file...'}</span>
+                          <Icon name="upload" className="w-4 h-4 text-zinc-400 shrink-0" />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => setPayForm({ ...payForm, screenshotName: e.target.files?.[0]?.name || '' })}
+                          />
+                        </label>
+                      </div>
+
+                      <p className="text-[11px] text-zinc-500">
+                        Your slot remains in <strong className="text-amber-400">Verification Pending</strong> until an admin confirms the UTR reference.
+                      </p>
+
+                      <button
+                        type="submit"
+                        className="w-full py-3.5 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white transition"
+                      >
+                        Submit Payment Details
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {regStep === 3 && activeReg && (
+                  <div className="text-center py-4 space-y-5">
+                    <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto">
+                      <Icon name="clock" className="w-6 h-6 text-amber-400" />
+                    </div>
+
+                    <div>
+                      <h3 className="font-orbitron font-bold text-xl text-white uppercase">REGISTRATION SUBMITTED</h3>
+                      <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto mt-2 leading-relaxed">
+                        Your payment details have been submitted for verification. Your tournament registration will be confirmed once your payment is verified.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 text-left space-y-2.5 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Registration ID</span>
+                        <span className="font-mono font-bold text-white">{activeReg.id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Tournament</span>
+                        <span className="font-medium text-white">{activeReg.tournamentName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Team Name</span>
+                        <span className="font-semibold text-red-500">{activeReg.teamName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Amount Submitted</span>
+                        <span className="font-orbitron font-bold text-white">₹{activeReg.amount}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">UTR Reference</span>
+                        <span className="font-mono text-zinc-300">{activeReg.utrNumber}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-zinc-800">
+                        <span className="text-zinc-500">Payment Status</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${getPaymentStatusClass(activeReg.paymentStatus)}`}>
+                          {activeReg.paymentStatus}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 justify-center">
+                      <button
+                        onClick={() => setRegStep(4)}
+                        className="px-5 py-2.5 rounded-xl text-xs font-medium bg-zinc-900 text-zinc-200 border border-zinc-800"
+                      >
+                        Status Lookup
+                      </button>
+                      <button
+                        onClick={() => setRegModalOpen(false)}
+                        className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-red-600 text-white"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {regStep === 4 && (
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-orbitron font-bold text-lg text-white uppercase">REGISTRATION STATUS LOOKUP</h3>
+                      <p className="text-xs text-zinc-400 mt-0.5">Search by Registration ID (e.g. DS-REG-8492) or Team Name.</p>
+                    </div>
+
+                    <div className="relative">
+                      <Icon name="search" className="w-4 h-4 text-zinc-500 absolute left-3.5 top-3" />
+                      <input
+                        type="text"
+                        placeholder="Search Team Name or DS-REG-XXXX..."
+                        value={lookupQuery}
+                        onChange={(e) => setLookupQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-600"
+                      />
+                    </div>
+
+                    <div className="space-y-2.5 max-h-72 overflow-y-auto">
+                      {data.registrations
+                        .filter((r) => {
+                          if (!lookupQuery.trim()) return true;
+                          const q = lookupQuery.toLowerCase();
+                          return r.id.toLowerCase().includes(q) || r.teamName.toLowerCase().includes(q);
+                        })
+                        .map((r) => (
+                          <div
+                            key={r.id}
+                            className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+                          >
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-xs text-zinc-500">{r.id}</span>
+                                <span className="font-semibold text-sm text-white">{r.teamName}</span>
+                              </div>
+                              <div className="text-xs text-zinc-400 mt-0.5">
+                                {r.tournamentName} • ₹{r.amount} • UTR: {r.utrNumber || 'Pending'}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${getPaymentStatusClass(r.paymentStatus)}`}>
+                                {r.paymentStatus}
+                              </span>
+                              {r.paymentStatus === 'Pending Payment' && (
+                                <button
+                                  onClick={() => { setActiveReg(r); setRegStep(2); }}
+                                  className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white"
+                                >
+                                  Pay
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* PROTECTED ADMIN LOGIN MODAL */}
+          {adminLoginOpen && (
+            <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-[#121215] border border-zinc-800 rounded-2xl max-w-sm w-full p-6 relative">
+                <button
+                  onClick={() => setAdminLoginOpen(false)}
+                  className="absolute top-4 right-4 p-2 rounded-lg bg-zinc-900 text-zinc-400 hover:text-white"
+                >
+                  <Icon name="x" className="w-4 h-4" />
+                </button>
+
+                <h3 className="font-orbitron font-bold text-base text-white uppercase">ADMIN ACCESS</h3>
+                <p className="text-xs text-zinc-400 mt-1 mb-5">
+                  Sign in to verify UPI payments and manage tournament standings.
+                </p>
+
+                {loginError && (
+                  <div className="mb-4 p-2.5 rounded-lg bg-red-500/10 border border-red-500/40 text-red-400 text-xs">
+                    {loginError}
+                  </div>
+                )}
+
+                <form onSubmit={handleAdminLogin} className="space-y-3.5">
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Username</label>
+                    <input
+                      type="text"
+                      required
+                      value={loginInputs.username}
+                      onChange={(e) => setLoginInputs({ ...loginInputs, username: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={loginInputs.password}
+                      onChange={(e) => setLoginInputs({ ...loginInputs, password: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#09090B] border border-zinc-800 text-white text-sm"
+                    />
+                  </div>
+
+                  <div className="text-[11px] text-zinc-500 font-mono">
+                    Credentials: admin / dsadmin2026
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white transition"
+                  >
+                    Unlock Admin Panel
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* SECURE ADMIN CONTROL PANEL */}
+          {adminPanelOpen && isAdmin && (
+            <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+              <div className="bg-[#121215] border border-zinc-800 rounded-2xl max-w-5xl w-full h-[90vh] flex flex-col overflow-hidden">
+                <div className="px-5 py-4 bg-[#09090B] border-b border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <DarkSyndicateEmblem className="w-8 h-8" />
+                    <div>
+                      <h3 className="font-orbitron font-bold text-sm sm:text-base text-white uppercase">ADMIN CONTROL PANEL</h3>
+                      <p className="text-[11px] text-zinc-500">All edits persist automatically in localStorage</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleResetDemo}
+                      className="px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white bg-zinc-900 border border-zinc-800 flex items-center gap-1"
+                    >
+                      <Icon name="reset" className="w-3.5 h-3.5" /> Reset Data
+                    </button>
+                    <button
+                      onClick={() => { setIsAdmin(false); setAdminPanelOpen(false); notify('Logged out of Admin Panel.'); }}
+                      className="px-3 py-1.5 rounded-lg text-xs text-red-400 bg-zinc-900 border border-zinc-800 flex items-center gap-1"
+                    >
+                      <Icon name="logout" className="w-3.5 h-3.5" /> Logout
+                    </button>
+                    <button
+                      onClick={() => setAdminPanelOpen(false)}
+                      className="p-2 rounded-lg bg-zinc-900 text-zinc-400 hover:text-white"
+                    >
+                      <Icon name="x" className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="px-5 py-2.5 bg-[#0D0D10] border-b border-zinc-800 flex items-center gap-2 overflow-x-auto shrink-0">
+                  {[
+                    { id: 'payments', label: `Payments & Regs (${data.registrations.length})` },
+                    { id: 'tournaments', label: 'Tournaments & Prizes' },
+                    { id: 'scores', label: 'Live Scores & Points' },
+                    { id: 'roster', label: 'Roster & Recruitment' }
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setAdminTab(t.id)}
+                      className={`px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+                        adminTab === t.id
+                          ? 'bg-red-600 text-white font-semibold'
+                          : 'bg-[#121215] text-zinc-400 hover:text-white border border-zinc-800'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="p-5 overflow-y-auto flex-1 space-y-6">
+                  {adminTab === 'payments' && (
+                    <div className="space-y-3">
+                      <div className="text-xs text-zinc-400">
+                        Verify UTR references manually before approving tournament slots.
+                      </div>
+                      {data.registrations.map((reg) => (
+                        <div key={reg.id} className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 space-y-3">
+                          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-mono text-xs text-zinc-500">{reg.id}</span>
+                                <span className="font-bold text-sm text-white">{reg.teamName}</span>
+                                <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${getPaymentStatusClass(reg.paymentStatus)}`}>
+                                  {reg.paymentStatus}
+                                </span>
+                              </div>
+                              <p className="text-xs text-zinc-400 mt-1">
+                                {reg.tournamentName} • Captain: {reg.captainName} ({reg.contact})
+                              </p>
+                              <p className="text-xs text-zinc-300 mt-1">
+                                Fee: <strong>₹{reg.amount}</strong> • UTR:{' '}
+                                <span className="font-mono text-amber-400">{reg.utrNumber || 'Not submitted'}</span> • File:{' '}
+                                <span className="text-zinc-500">{reg.screenshotName || 'None'}</span>
+                              </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                              <button
+                                onClick={() => handlePaymentDecision(reg.id, 'Payment Verified')}
+                                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white"
+                              >
+                                Approve (Verified)
+                              </button>
+                              <button
+                                onClick={() => handlePaymentDecision(reg.id, 'Payment Rejected')}
+                                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600/80 hover:bg-red-600 text-white"
+                              >
+                                Reject
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setData((prev) => ({
+                                    ...prev,
+                                    registrations: prev.registrations.filter((item) => item.id !== reg.id)
+                                  }))
+                                }
+                                className="p-1.5 rounded-lg bg-zinc-900 text-zinc-400 hover:text-red-400"
+                              >
+                                <Icon name="trash" className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-zinc-800/80 text-[11px] font-mono text-zinc-400">
+                            {(reg.players || []).map((p, i) => (
+                              <div key={i} className="px-2.5 py-1 rounded bg-[#121215]">
+                                {p.name}: {p.uid}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {adminTab === 'tournaments' && (
+                    <div className="space-y-6">
+                      <div className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 space-y-3">
+                        <h4 className="font-orbitron font-bold text-xs text-white uppercase">
+                          Entry Fee & Prize Pool Configuration
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">Entry Fee (₹)</label>
+                            <input
+                              type="number"
+                              value={data.prizeConfig.entryFee}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  prizeConfig: { ...prev.prizeConfig, entryFee: Number(e.target.value) || 0 }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">1st Prize (₹)</label>
+                            <input
+                              type="number"
+                              value={data.prizeConfig.firstPrize}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  prizeConfig: { ...prev.prizeConfig, firstPrize: Number(e.target.value) || 0 }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">2nd Prize (₹)</label>
+                            <input
+                              type="number"
+                              value={data.prizeConfig.secondPrize}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  prizeConfig: { ...prev.prizeConfig, secondPrize: Number(e.target.value) || 0 }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">3rd Prize (₹)</label>
+                            <input
+                              type="number"
+                              value={data.prizeConfig.thirdPrize}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  prizeConfig: { ...prev.prizeConfig, thirdPrize: Number(e.target.value) || 0 }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div className="col-span-2 sm:col-span-1">
+                            <label className="block text-[11px] text-zinc-400 mb-1">UPI ID</label>
+                            <input
+                              type="text"
+                              value={data.prizeConfig.upiId}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  prizeConfig: { ...prev.prizeConfig, upiId: e.target.value }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (!newTour.name.trim()) return;
+                          setData((prev) => ({
+                            ...prev,
+                            tournaments: [
+                              {
+                                ...newTour,
+                                id: `tour-${Date.now()}`,
+                                entryFee: Number(newTour.entryFee) || 150,
+                                prizePool: Number(newTour.prizePool) || 1000,
+                                slotsTotal: Number(newTour.slotsTotal) || 48,
+                                slotsFilled: 1
+                              },
+                              ...prev.tournaments
+                            ]
+                          }));
+                          setNewTour({
+                            name: '', date: '2026-12-05', time: '08:00 PM IST', opponent: '48 Open Squads',
+                            status: 'Upcoming', format: 'Squad BR • 3 Maps', entryFee: 150, prizePool: 1000, slotsTotal: 48
+                          });
+                          notify('Tournament added.');
+                        }}
+                        className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 space-y-3"
+                      >
+                        <h4 className="font-orbitron font-bold text-xs text-white uppercase">Add Tournament</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <input
+                            type="text"
+                            required
+                            placeholder="Tournament Name"
+                            value={newTour.name}
+                            onChange={(e) => setNewTour({ ...newTour, name: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Date (YYYY-MM-DD)"
+                            value={newTour.date}
+                            onChange={(e) => setNewTour({ ...newTour, date: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Format"
+                            value={newTour.format}
+                            onChange={(e) => setNewTour({ ...newTour, format: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                        </div>
+                        <button type="submit" className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-600 text-white">
+                          + Create Tournament
+                        </button>
+                      </form>
+
+                      <div className="space-y-2.5">
+                        {data.tournaments.map((t) => (
+                          <div key={t.id} className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                              <div className="font-semibold text-sm text-white">{t.name}</div>
+                              <div className="text-xs text-zinc-500">{t.date} • {t.time} • Entry ₹{t.entryFee}</div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={t.status}
+                                onChange={(e) =>
+                                  setData((prev) => ({
+                                    ...prev,
+                                    tournaments: prev.tournaments.map((item) =>
+                                      item.id === t.id ? { ...item, status: e.target.value } : item
+                                    )
+                                  }))
+                                }
+                                className="px-3 py-1.5 rounded-lg bg-[#121215] border border-zinc-800 text-xs text-white"
+                              >
+                                <option value="Upcoming">Upcoming</option>
+                                <option value="Live">Live</option>
+                                <option value="Completed">Completed</option>
+                              </select>
+                              <button
+                                onClick={() =>
+                                  setData((prev) => ({
+                                    ...prev,
+                                    tournaments: prev.tournaments.filter((item) => item.id !== t.id)
+                                  }))
+                                }
+                                className="p-1.5 rounded-lg bg-zinc-900 text-zinc-400 hover:text-red-400"
+                              >
+                                <Icon name="trash" className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {adminTab === 'scores' && (
+                    <div className="space-y-6">
+                      <div className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 space-y-3">
+                        <h4 className="font-orbitron font-bold text-xs text-white uppercase">Points System Rules</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">Points / Kill</label>
+                            <input
+                              type="number"
+                              value={data.pointsSystem.killPoints}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  pointsSystem: { ...prev.pointsSystem, killPoints: Number(e.target.value) || 0 }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">Booyah Bonus</label>
+                            <input
+                              type="number"
+                              value={data.pointsSystem.booyahBonus}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  pointsSystem: { ...prev.pointsSystem, booyahBonus: Number(e.target.value) || 0 }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">#1 Place Pts</label>
+                            <input
+                              type="number"
+                              value={data.pointsSystem.placementPoints[1]}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  pointsSystem: {
+                                    ...prev.pointsSystem,
+                                    placementPoints: { ...prev.pointsSystem.placementPoints, 1: Number(e.target.value) || 0 }
+                                  }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-zinc-400 mb-1">#2 Place Pts</label>
+                            <input
+                              type="number"
+                              value={data.pointsSystem.placementPoints[2]}
+                              onChange={(e) =>
+                                setData((prev) => ({
+                                  ...prev,
+                                  pointsSystem: {
+                                    ...prev.pointsSystem,
+                                    placementPoints: { ...prev.pointsSystem.placementPoints, 2: Number(e.target.value) || 0 }
+                                  }
+                                }))
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          setData((prev) => ({
+                            ...prev,
+                            teams: prev.teams.map((t) =>
+                              t.id === roundInput.teamId
+                                ? {
+                                    ...t,
+                                    rounds: [
+                                      ...(t.rounds || []),
+                                      {
+                                        round: roundInput.round,
+                                        placement: Number(roundInput.placement) || 1,
+                                        kills: Number(roundInput.kills) || 0,
+                                        bonus: 0
+                                      }
+                                    ]
+                                  }
+                                : t
+                            )
+                          }));
+                          notify('Round result posted. Standings updated.');
+                        }}
+                        className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 space-y-3"
+                      >
+                        <h4 className="font-orbitron font-bold text-xs text-white uppercase">Post Live Round Result</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                          <select
+                            value={roundInput.teamId}
+                            onChange={(e) => setRoundInput({ ...roundInput, teamId: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-xs"
+                          >
+                            {data.teams.map((t) => (
+                              <option key={t.id} value={t.id}>{t.name}</option>
+                            ))}
+                          </select>
+                          <input
+                            type="text"
+                            placeholder="Round & Map"
+                            value={roundInput.round}
+                            onChange={(e) => setRoundInput({ ...roundInput, round: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                          <input
+                            type="number"
+                            min="1"
+                            max="12"
+                            placeholder="Placement (1-12)"
+                            value={roundInput.placement}
+                            onChange={(e) => setRoundInput({ ...roundInput, placement: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                          <input
+                            type="number"
+                            min="0"
+                            placeholder="Kills"
+                            value={roundInput.kills}
+                            onChange={(e) => setRoundInput({ ...roundInput, kills: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                        </div>
+                        <button type="submit" className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-600 text-white">
+                          + Add Round Score
+                        </button>
+                      </form>
+
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (!newTeam.name.trim()) return;
+                          setData((prev) => ({
+                            ...prev,
+                            teams: [
+                              ...prev.teams,
+                              {
+                                id: `team-${Date.now()}`,
+                                name: newTeam.name.trim().toUpperCase(),
+                                tag: (newTeam.tag.trim() || newTeam.name.slice(0, 3)).toUpperCase(),
+                                matchesPlayed: 0, booyahs: 0, kills: 0, bonusPoints: 0, placementPoints: 0, totalPoints: 0,
+                                rounds: []
+                              }
+                            ]
+                          }));
+                          setNewTeam({ name: '', tag: '' });
+                          notify('Team added to standings.');
+                        }}
+                        className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 flex flex-col sm:flex-row gap-3"
+                      >
+                        <input
+                          type="text"
+                          required
+                          placeholder="New Squad Name"
+                          value={newTeam.name}
+                          onChange={(e) => setNewTeam({ ...newTeam, name: e.target.value })}
+                          className="flex-1 px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                        />
+                        <input
+                          type="text"
+                          maxLength={4}
+                          placeholder="Tag (3-4 chars)"
+                          value={newTeam.tag}
+                          onChange={(e) => setNewTeam({ ...newTeam, tag: e.target.value })}
+                          className="sm:w-32 px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm uppercase"
+                        />
+                        <button type="submit" className="px-4 py-2 rounded-lg text-xs font-semibold bg-zinc-800 text-white">
+                          + Add Team
+                        </button>
+                      </form>
+                    </div>
+                  )}
+
+                  {adminTab === 'roster' && (
+                    <div className="space-y-6">
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (!newPlayer.ign.trim()) return;
+                          setData((prev) => ({
+                            ...prev,
+                            roster: [
+                              ...prev.roster,
+                              {
+                                ...newPlayer,
+                                id: `p-${Date.now()}`,
+                                kills: 100, mvps: 5, matches: 30, avgPlacement: 2.6,
+                                social: 'https://instagram.com',
+                                recentMatches: [
+                                  { match: 'Syndicate Night Clash', placement: 1, kills: 6, points: 18, mvp: true }
+                                ]
+                              }
+                            ]
+                          }));
+                          setNewPlayer({ ign: '', realName: '', role: 'Rusher', number: '05', uid: '', socialHandle: '@ds_operative' });
+                          notify('Player added to roster.');
+                        }}
+                        className="p-4 rounded-xl bg-[#09090B] border border-zinc-800 space-y-3"
+                      >
+                        <h4 className="font-orbitron font-bold text-xs text-white uppercase">Add Roster Player</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <input
+                            type="text"
+                            required
+                            placeholder="Player IGN"
+                            value={newPlayer.ign}
+                            onChange={(e) => setNewPlayer({ ...newPlayer, ign: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Real Name"
+                            value={newPlayer.realName}
+                            onChange={(e) => setNewPlayer({ ...newPlayer, realName: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          />
+                          <select
+                            value={newPlayer.role}
+                            onChange={(e) => setNewPlayer({ ...newPlayer, role: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm"
+                          >
+                            <option value="IGL">IGL</option>
+                            <option value="Rusher">Rusher</option>
+                            <option value="Sniper">Sniper</option>
+                            <option value="Support">Support</option>
+                          </select>
+                          <input
+                            type="text"
+                            placeholder="Free Fire UID"
+                            value={newPlayer.uid}
+                            onChange={(e) => setNewPlayer({ ...newPlayer, uid: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-[#121215] border border-zinc-800 text-white text-sm font-mono"
+                          />
+                        </div>
+                        <button type="submit" className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-600 text-white">
+                          + Add Player
+                        </button>
+                      </form>
+
+                      <div className="space-y-2.5">
+                        {data.roster.map((p) => (
+                          <div key={p.id} className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 flex items-center justify-between gap-3">
+                            <div>
+                              <div className="font-semibold text-sm text-white">{p.ign} ({p.role})</div>
+                              <div className="text-xs text-zinc-500">Kills: {p.kills} • MVPs: {p.mvps}</div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() =>
+                                  setData((prev) => ({
+                                    ...prev,
+                                    roster: prev.roster.map((item) =>
+                                      item.id === p.id ? { ...item, kills: item.kills + 5, mvps: item.mvps + 1 } : item
+                                    )
+                                  }))
+                                }
+                                className="px-2.5 py-1 rounded text-xs bg-zinc-900 text-emerald-400 border border-zinc-800"
+                              >
+                                +5 Kills / +1 MVP
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setData((prev) => ({
+                                    ...prev,
+                                    roster: prev.roster.filter((item) => item.id !== p.id)
+                                  }))
+                                }
+                                className="p-1.5 rounded bg-zinc-900 text-zinc-400 hover:text-red-400"
+                              >
+                                <Icon name="trash" className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-2.5 pt-2">
+                        <h4 className="font-orbitron font-bold text-xs text-white uppercase">
+                          Tryout Applications ({data.applications.length})
+                        </h4>
+                        {data.applications.map((app) => (
+                          <div key={app.id} className="p-3.5 rounded-xl bg-[#09090B] border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                              <div className="font-semibold text-sm text-white">
+                                {app.playerName} • <span className="text-red-500">{app.role}</span>
+                              </div>
+                              <div className="text-xs text-zinc-400 font-mono">
+                                UID: {app.uid} • {app.contact}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-amber-400">{app.status}</span>
+                              <button
+                                onClick={() =>
+                                  setData((prev) => ({
+                                    ...prev,
+                                    applications: prev.applications.map((item) =>
+                                      item.id === app.id ? { ...item, status: 'Invited to Trial' } : item
+                                    )
+                                  }))
+                                }
+                                className="px-3 py-1 rounded text-xs font-semibold bg-emerald-600 text-white"
+                              >
+                                Invite Trial
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
